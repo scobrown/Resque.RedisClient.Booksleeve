@@ -37,7 +37,14 @@ namespace Resque.RedisClient.Booksleeve
         }
         public Tuple<string,string> BLPop(string[] keys, int timeoutSeconds = 0)
         {
-            return Client.Wait(Client.Lists.BlockingRemoveFirstString(RedisDb, KeyInNamespace(keys), timeoutSeconds));
+            try
+            {
+                return Client.Wait(Client.Lists.BlockingRemoveFirstString(RedisDb, KeyInNamespace(keys), timeoutSeconds));
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public IEnumerable<string> SMembers(string key)
