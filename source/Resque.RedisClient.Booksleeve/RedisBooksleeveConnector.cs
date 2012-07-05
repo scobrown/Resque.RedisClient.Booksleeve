@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using BookSleeve;
 
 namespace Resque.RedisClient.Booksleeve
@@ -35,16 +36,37 @@ namespace Resque.RedisClient.Booksleeve
         {
             return Client.Wait(Client.Lists.RemoveFirstString(RedisDb, KeyInNamespace(key)));
         }
-        public Tuple<string,string> BLPop(string[] keys, int timeoutSeconds = 0)
+
+        public Tuple<string,string> BLPop(string[] keys, int timeoutSeconds)
         {
             try
             {
                 return Client.Wait(Client.Lists.BlockingRemoveFirstString(RedisDb, KeyInNamespace(keys), timeoutSeconds));
             }
-            catch
+            catch(TimeoutException)
             {
                 return null;
             }
+        }
+
+        public Dictionary<string, string> HGetAll(string key)
+        {
+            return Client.Wait(Client.Hashes.GetAll(RedisDb, KeyInNamespace(key))).ToDictionary(k=>k.Key, v=>FromUtf8Bytes(v.Value));
+        }
+
+        private static string FromUtf8Bytes(byte[] bytes)
+		{
+			return bytes == null ? null : Encoding.UTF8.GetString(bytes);
+		}
+
+        public void HSet(string key, string field, string value)
+        {
+            Client.Wait(Client.Hashes.Set(RedisDb, KeyInNamespace(key), field, value));
+        }
+
+        public long Incr(string key)
+        {
+            return Client.Wait(Client.Strings.Increment(RedisDb, KeyInNamespace(key)));
         }
 
         public IEnumerable<string> SMembers(string key)
