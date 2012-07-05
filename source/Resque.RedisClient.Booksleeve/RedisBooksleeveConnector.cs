@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using BookSleeve;
 
 namespace Resque.RedisClient.Booksleeve
@@ -35,13 +36,14 @@ namespace Resque.RedisClient.Booksleeve
         {
             return Client.Wait(Client.Lists.RemoveFirstString(RedisDb, KeyInNamespace(key)));
         }
-        public Tuple<string,string> BLPop(string[] keys, int timeoutSeconds = 0)
+
+        public Tuple<string,string> BLPop(string[] keys, int timeoutSeconds)
         {
             try
             {
                 return Client.Wait(Client.Lists.BlockingRemoveFirstString(RedisDb, KeyInNamespace(keys), timeoutSeconds));
             }
-            catch
+            catch(TimeoutException)
             {
                 return null;
             }
@@ -49,11 +51,7 @@ namespace Resque.RedisClient.Booksleeve
 
         public Dictionary<string, string> HGetAll(string key)
         {
-            var nmKey = KeyInNamespace(key);
-            var fields = Client.Wait(Client.Hashes.GetKeys(RedisDb, nmKey));
-            var values = Client.Wait(Client.Hashes.GetString(RedisDb, nmKey, fields));
-
-            return fields.Zip(values, (k, v) => new {k, v}).ToDictionary(k => k.k, v => v.v);
+            return Client.Wait(Client.Hashes.GetAll(RedisDb, KeyInNamespace(key))).ToDictionary(k=>k.Key, v=>FromUtf8Bytes(v.Value));
         }
 
         public string HGet(string key, string field)
@@ -90,6 +88,16 @@ namespace Resque.RedisClient.Booksleeve
         public double ZScore(string key, string member)
         {
             return Client.Wait(Client.SortedSets.Score(RedisDb, KeyInNamespace(key), member));
+        }
+
+        private static string FromUtf8Bytes(byte[] bytes)
+		{
+			return bytes == null ? null : Encoding.UTF8.GetString(bytes);
+		}
+        
+        public long Incr(string key)
+        {
+            return Client.Wait(Client.Strings.Increment(RedisDb, KeyInNamespace(key)));
         }
 
         public IEnumerable<string> SMembers(string key)
