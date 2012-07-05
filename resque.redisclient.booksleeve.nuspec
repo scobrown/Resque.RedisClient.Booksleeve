@@ -2,7 +2,7 @@
 <package xmlns='http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd'>
 	<metadata>
 		<id>Resque.RedisClient.Booksleeve</id>
-		<version>0.2.1</version>
+		<version>0.2.4</version>
 		<title>Resque Booksleeve Client</title>
 		<authors>Scott Brown</authors>
 		<description>Booksleeve Redis Client for Resque</description>
@@ -10,7 +10,7 @@
 		<projectUrl>https://github.com/scobrown/Resque.RedisClient.Booksleeve</projectUrl>
 		<dependencies>
 			<dependency id='BookSleeve' version='1.1.0.7'/>
-			<dependency id='Resque' version='0.2.0'/>
+			<dependency id='Resque' version='0.2.6'/>
 		</dependencies>
 		<references>
 			<reference file="Resque.RedisClient.Booksleeve.dll" />

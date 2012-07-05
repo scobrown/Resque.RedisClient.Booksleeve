@@ -46,7 +46,7 @@
       <HintPath>..\packages\NUnit.2.6.0.12054\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="Resque, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Resque.0.2.0\lib\4.0\Resque.dll</HintPath>
+      <HintPath>..\packages\Resque.0.2.5\lib\4.0\Resque.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RedisClient.cs" />
     <Compile Include="ResqueCanQueue.cs" />
   </ItemGroup>
   <ItemGroup>
